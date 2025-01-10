@@ -1,7 +1,7 @@
 <template>
   <li>
     <div class="cursor-pointer" @click="emit('nodeClick', path)">
-      <slot :slot-props="{ node, depth, active: isActive }"></slot>
+      <slot :slot-props="{ node, depth }"></slot>
     </div>
     <Transition appear name="slide-in">
       <ul v-if="sortedChildNodeList?.length > 0 && isActive">
@@ -77,7 +77,7 @@ const emit = defineEmits<{
 
 .slide-in-enter-from,
 .slide-in-leave-to {
-  transform: translateY(-5px);
+  transform: translateX(-5px);
   opacity: 0;
 }
 </style>

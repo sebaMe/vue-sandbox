@@ -8,10 +8,13 @@
       <template #default="{ slotProps }">
         <div
           class="mt-1 px-2"
-          :class="{ 'bg-blue-700 text-white': slotProps.active }"
+          :class="{
+            'bg-blue-700 text-white': activeKeys.includes(slotProps.node?.Rsc)
+          }"
           :style="{ marginLeft: `${slotProps.depth / 2}rem` }"
         >
-          {{ slotProps.node.Name ?? "Result" }}
+          <span class="mr-2">{{ slotProps.depth }}</span>
+          <span>{{ slotProps.node.Name ?? "Result" }}</span>
         </div>
       </template>
     </CompetitionTree>
