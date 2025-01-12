@@ -1,25 +1,28 @@
 <template>
   <div>
-    <span v-if="isEventRsc(routeParams.at(-1) as string)">Event - </span>
-    <span v-if="isPhaseRsc(routeParams.at(-1) as string)">Phase - </span>
-    <span v-if="isUnitRsc(routeParams.at(-1) as string)">Unit - </span>
+    <span v-if="isEventRsc(event)">Event - </span>
+    <span v-if="isPhaseRsc(phase)">Phase - </span>
+    <span v-if="isUnitRsc(unit)">Unit - </span>
     <span>Results</span>
   </div>
-  <div>{{ routeParams }}</div>
+  <div>{{ event }} {{ phase }} {{ unit }}</div>
 </template>
 
 <script setup lang="ts">
-import { isEmpty } from "lodash-es";
-import { computed } from "vue";
-import { useRoute } from "vue-router";
-
 import { isEventRsc, isPhaseRsc, isUnitRsc } from "../utils/rsc.utils";
 
-const route = useRoute();
-
-const routeParams = computed(() => {
-  return Object.values(route.params ?? {}).filter((param) => !isEmpty(param));
-});
+withDefaults(
+  defineProps<{
+    event?: string;
+    phase?: string;
+    unit?: string;
+  }>(),
+  {
+    event: undefined,
+    phase: undefined,
+    unit: undefined
+  }
+);
 </script>
 
 <style lang="scss"></style>

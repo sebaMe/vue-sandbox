@@ -1,10 +1,10 @@
 <template>
-  <li>
+  <li :class="{ 'x--active': isActive }">
     <div class="cursor-pointer" @click="emit('nodeClick', path)">
       <slot :slot-props="{ node, depth }"></slot>
     </div>
     <Transition appear name="slide-in">
-      <ul v-if="sortedChildNodeList?.length > 0 && isActive">
+      <ul v-if="sortedChildNodeList?.length > 0" v-show="isActive">
         <CompetitionTreeNode
           v-for="childNode in sortedChildNodeList"
           :key="childNode.Rsc"
