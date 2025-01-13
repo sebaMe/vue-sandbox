@@ -1,27 +1,23 @@
 <template>
   <div class="flex overflow-hidden">
-    <router-link :to="{ name: 'competition-tree' }">
-      <template #default="{ isActive }">
-        <div :class="{ 'bg-slate-200': isActive }">Test</div>
-      </template>
-    </router-link>
     <div class="overflow-auto">
       <CompetitionTree
-        :root-node="compStruct"
-        :active-keys="activeKeys"
+        :root-node="eventList"
+        :selected-key="rsc"
         @node-click="onNodeClick"
       >
         <template #default="{ slotProps }">
-          <div
+          <router-link
             class="mt-1 px-2"
             :class="{
-              'bg-blue-700 text-white': activeKeys.includes(slotProps.node?.Rsc)
+              'bg-blue-700 text-white': slotProps.isActive
             }"
             :style="{ marginLeft: `${slotProps.depth / 2}rem` }"
+            :to="getContextRouteTo(slotProps.node.Rsc)"
           >
             <span class="mr-2">{{ slotProps.depth }}</span>
             <span>{{ slotProps.node.Name ?? "Result" }}</span>
-          </div>
+          </router-link>
         </template>
       </CompetitionTree>
     </div>
@@ -35,50 +31,39 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed } from "vue";
 
 import compStructJson from "../assets/jsons/EXAMPLE_COMPSTRUCT_JSON.json";
 import CompetitionTree from "../components/CompetitionTree.vue";
 import { toEventTreeRoute } from "../router";
 import { isEventRsc, isPhaseRsc, isUnitRsc } from "../utils/rsc.utils";
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
-    event?: string;
-    phase?: string;
-    unit?: string;
+    rsc?: string;
   }>(),
   {
-    event: undefined,
-    phase: undefined,
-    unit: undefined
+    rsc: undefined
   }
 );
 
-const compStruct = ref(compStructJson.Events);
+const eventList = computed(() => Object.values(compStructJson.Events ?? {}));
 
-const activeKeys = computed(() => {
-  return [props.event, props.phase, props.unit];
-});
-
-onMounted(() => {
-  document
-    .querySelector(".x--active")
-    ?.scrollIntoView({ behavior: "smooth", block: "center" });
-});
+const getContextRouteTo = (rsc: string) => {
+  if (isEventRsc(rsc)) {
+    return toEventTreeRoute("competition-tree_event_result", { rsc });
+  }
+  if (isPhaseRsc(rsc)) {
+    return toEventTreeRoute("competition-tree_phase_result", { rsc });
+  }
+  if (isUnitRsc(rsc)) {
+    return toEventTreeRoute("competition-tree_unit_result", { rsc });
+  }
+  return toEventTreeRoute("competition-tree");
+};
 
 const onNodeClick = (path: string[]) => {
-  if (path.length > 0) {
-    if (isEventRsc(path.at(-1))) {
-      toEventTreeRoute("competition-tree_event_result", path);
-    }
-    if (isPhaseRsc(path.at(-1))) {
-      toEventTreeRoute("competition-tree_phase_result", path);
-    }
-    if (isUnitRsc(path.at(-1))) {
-      toEventTreeRoute("competition-tree_unit_result", path);
-    }
-  }
+  console.log(path);
 };
 </script>
 

@@ -1,11 +1,11 @@
 <template>
   <div>
-    <span v-if="isEventRsc(event)">Event - </span>
-    <span v-if="isPhaseRsc(phase)">Phase - </span>
-    <span v-if="isUnitRsc(unit)">Unit - </span>
+    <span v-if="isEventRsc(rsc)">Event - </span>
+    <span v-if="isPhaseRsc(rsc)">Phase - </span>
+    <span v-if="isUnitRsc(rsc)">Unit - </span>
     <span>Results</span>
   </div>
-  <div>{{ event }} {{ phase }} {{ unit }}</div>
+  <div>{{ rsc }}</div>
 </template>
 
 <script setup lang="ts">
@@ -13,14 +13,10 @@ import { isEventRsc, isPhaseRsc, isUnitRsc } from "../utils/rsc.utils";
 
 withDefaults(
   defineProps<{
-    event?: string;
-    phase?: string;
-    unit?: string;
+    rsc?: string;
   }>(),
   {
-    event: undefined,
-    phase: undefined,
-    unit: undefined
+    rsc: undefined
   }
 );
 </script>

@@ -1,7 +1,7 @@
 <template>
   <li :class="{ 'x--active': isActive }">
-    <div class="cursor-pointer" @click="emit('nodeClick', path)">
-      <slot :slot-props="{ node, depth }"></slot>
+    <div class="cursor-pointer" @click="emit('nodeClick', rscPath)">
+      <slot :slot-props="{ node, isActive, depth }"></slot>
     </div>
     <Transition appear name="slide-in">
       <ul v-if="sortedChildNodeList?.length > 0" v-show="isActive">
@@ -9,9 +9,10 @@
           v-for="childNode in sortedChildNodeList"
           :key="childNode.Rsc"
           :node="childNode"
-          :path="[...path, childNode.Rsc]"
-          :active-keys
+          :rsc-path="[...rscPath, childNode.Rsc]"
+          :selected-key
           :sort-prop
+          :node-path
           :depth="depth + 1"
           @node-click="($event) => emit('nodeClick', $event)"
         >
@@ -29,28 +30,33 @@ import { sortBy } from "lodash-es";
 import { computed } from "vue";
 
 import { ICompStructItem } from "../interfaces/compstruct.interface";
+import { getAncestorRscList } from "../utils/rsc.utils";
 
 const props = withDefaults(
   defineProps<{
-    activeKeys?: string[];
-    path?: string[];
     node: ICompStructItem;
+    selectedKey?: string;
+    rscPath?: string[];
+    nodePath?: string[];
     sortProp?: string;
     depth?: number;
   }>(),
   {
-    activeKeys: () => [],
-    path: () => [],
     node: undefined,
+    selectedKey: undefined,
+    rscPath: () => [],
+    nodePath: () => [],
     sortProp: "ListIndex",
     depth: 0
   }
 );
 
-const isActive = computed(() => props.activeKeys.includes(props.node?.Rsc));
+const activeKeys = computed(() => {
+  return getAncestorRscList(props.selectedKey);
+});
+const isActive = computed(() => activeKeys.value.includes(props.node?.Rsc));
 
-const nodePath = ["Phases", "Units", "Subunits"];
-const childNodeProp = computed(() => nodePath[props.depth]);
+const childNodeProp = computed(() => props.nodePath[props.depth]);
 const childNodeList = computed<ICompStructItem[]>(() =>
   Object.values(props.node?.[childNodeProp.value] ?? {})
 );
