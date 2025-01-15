@@ -1,4 +1,4 @@
-import { _RouteRecordProps, RouteRecordRaw } from "vue-router";
+import { _RouteRecordProps, RouteComponent, RouteRecordRaw } from "vue-router";
 
 import EventOverview from "./pages/EventOverview.vue";
 
@@ -8,52 +8,50 @@ export type EventOverviewRouteNames =
   | "event-overview_phase"
   | "event-overview_unit";
 
-export interface EventOverviewConfig<T> {
-  event: {
-    defaultRoute: T;
-    children: ({ name: T; props: _RouteRecordProps } & RouteRecordRaw)[];
-  };
-  phase: {
-    defaultRoute: T;
-    children: ({ name: T; props: _RouteRecordProps } & RouteRecordRaw)[];
-  };
-  unit: {
-    defaultRoute: T;
-    children: ({ name: T; props: _RouteRecordProps } & RouteRecordRaw)[];
-  };
+export interface IEventOverviewContextItem<T> {
+  defaultRouteName: T;
+  component: RouteComponent;
+  children?: ({ name: T; props: _RouteRecordProps } & RouteRecordRaw)[];
 }
 
-export const defineEventOverviewRoutes = <TRouteNames>(
-  definition: EventOverviewConfig<TRouteNames>
+export interface IEventOverviewContextConfig<T> {
+  component?: RouteComponent;
+  event: IEventOverviewContextItem<T>;
+  phase: IEventOverviewContextItem<T>;
+  unit: IEventOverviewContextItem<T>;
+}
+
+export const createEventOverviewRoutes = <TRouteNames>(
+  config: IEventOverviewContextConfig<TRouteNames>
 ): RouteRecordRaw => {
   return {
     name: "event-overview",
     path: "/event-overview",
-    component: EventOverview,
+    component: config.component ?? EventOverview,
     props: (route) => ({
       rsc: route.params?.rsc,
-      defaultEventRoute: definition.event.defaultRoute,
-      defaultPhaseRoute: definition.phase.defaultRoute,
-      defaultUnitRoute: definition.unit.defaultRoute
+      defaultEventRouteName: config.event.defaultRouteName,
+      defaultPhaseRouteName: config.phase.defaultRouteName,
+      defaultUnitRouteName: config.unit.defaultRouteName
     }),
     children: [
       {
         name: "event-overview_event",
         path: "event/:rsc",
-        component: {},
-        children: definition.event.children
+        component: config.event.component,
+        children: config.event.children
       },
       {
         name: "event-overview_phase",
         path: "phase/:rsc",
-        component: {},
-        children: definition.phase.children
+        component: config.phase.component,
+        children: config.phase.children
       },
       {
         name: "event-overview_unit",
         path: "unit/:rsc",
-        component: {},
-        children: definition.unit.children
+        component: config.unit.component,
+        children: config.unit.children
       }
     ]
   };

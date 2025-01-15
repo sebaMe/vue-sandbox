@@ -4,8 +4,9 @@ import { createPinia } from "pinia";
 import { createApp } from "vue";
 
 import App from "./App.vue";
+import ResultPage from "./pages/ResultPage.vue";
 import { router } from "./router";
-import { defineEventOverviewRoutes, EventOverviewRouteNames } from "./routing";
+import { createEventOverviewRoutes, EventOverviewRouteNames } from "./routing";
 
 const pinia = createPinia();
 
@@ -17,9 +18,10 @@ type SportEventOverviewRouteNames =
   | "event-overview_phase_summary"
   | "event-overview_unit_results";
 
-const routes = defineEventOverviewRoutes<SportEventOverviewRouteNames>({
+const routes = createEventOverviewRoutes<SportEventOverviewRouteNames>({
   event: {
-    defaultRoute: "event-overview_event_entry-list",
+    component: ResultPage,
+    defaultRouteName: "event-overview_event_entry-list",
     children: [
       {
         name: "event-overview_event_entry-list",
@@ -30,7 +32,8 @@ const routes = defineEventOverviewRoutes<SportEventOverviewRouteNames>({
     ]
   },
   phase: {
-    defaultRoute: "event-overview_phase_summary",
+    component: ResultPage,
+    defaultRouteName: "event-overview_phase_summary",
     children: [
       {
         name: "event-overview_phase_summary",
@@ -41,7 +44,8 @@ const routes = defineEventOverviewRoutes<SportEventOverviewRouteNames>({
     ]
   },
   unit: {
-    defaultRoute: "event-overview_unit_results",
+    component: ResultPage,
+    defaultRouteName: "event-overview_unit_results",
     children: [
       {
         name: "event-overview_unit_results",
